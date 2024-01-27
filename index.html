@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .progress-container {
+      position: relative;
+      width: 100px;
+      height: 100px;
+    }
+
+    .progress-background {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background-color: #e0e0e0;
+    }
+
+    .progress-bar {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      clip: rect(0, 50px, 100px, 0);
+      background-color: #4caf50;
+      transform: rotate(90deg);
+      transform-origin: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="progress-container">
+    <div class="progress-background"></div>
+    <div class="progress-bar" style="transform: rotate(45deg);"></div>
+  </div>
+
+</body>
+</html>
+

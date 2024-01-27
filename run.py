@@ -2,22 +2,25 @@ import os
 from datetime import timedelta
 from datetime import date
 
-
-def get_file(specific_day):
+# Give True or false with date available on a specific person (ex : person="person_a", specific_day="[[2024.01.01]]")
+def is_connect_with_specific_date(person,specific_day):
+    is_connected    = False
     path            = "People"
-    network_list    = os.listdir(path)
 
-    for per_person in network_list:
-        file    = open(path+"/"+per_person,"r")
-        content = file.readlines()
+    file    = open(path+"/"+person+".md","r")
+    content = file.readlines()
         
-        for single_line in content:
-            if(specific_day in single_line):
-                print("file : "+(per_person)+" content : "+ str(single_line))
-
+    for single_line in content:
+        if(specific_day in single_line):
+            is_connected = True
+            break
+    
+    file.close()
+    return is_connected
 # t1 = datetime.date(year=2024,month=1,day=1)
 
 # Get peoples from the main lists categories( ex : from A_list list_name="A_list.md")
+# Will return string people list (ex: ["[[person_a]]", "[[person_b]]"])
 def get_people_from_lists(list_name):
     a_list_file = open(list_name,"r")
     a_people       = a_list_file.readlines()
@@ -27,14 +30,68 @@ def get_people_from_lists(list_name):
         except:
             break
     for count in range(len(a_people)):
-        a_people[count] = a_people[count][:-1]
-    
+        if(a_people[count][-1:] == "\n"):
+            a_people[count] = a_people[count][:-1]
     return a_people
 
+# Append html code into daily dairy (ex : today="2024-01-01",html_code=str(code))
+def put_html_on_daily_dairy(today,html_code):
+    today_list = str(today).split("-")
+    today_file_format = today_list[0]+"."+today_list[1]+"."+today_list[2]+".md"
+    path = "Diary/"+today_file_format
+    file = open(path,"+a");
+    file.write(html_code)
+    file.close()
 
+# html string maker 
+def make_html_code(a_percentage,b_percentage,c_percentage,d_percentage):
+    code =  f"""
+    <body>
+        <div class="container">
+            <div class="progress" style="--i:{int(a_percentage)};--clr:#43f94a; font-size:9; '">
+                <h3 style="top:35px">{int(a_percentage)}<span>%</span></h3>
+                <h4 style="top:50px; font-size:16;">A</h4>
+            </div>
+            <div class="progress" style="--i:{int(b_percentage)};--clr:#43f9e1; font-size:9;">
+                <h3 style="top:35px">{int(b_percentage)}<span>%</span></h3>
+                <h4 style="top:50px; font-size:16;">B</h4>
+            </div>
+            <div class="progress less" style="--i:{int(c_percentage)};--clr:#a143f9; font-size:9;">
+                <h3 style="top:35px">{int(c_percentage)}<span>%</span></h3>
+                <h4 style="top:50px; font-size:16;"> C</h4>
+            </div>
+            <div class="progress" style="--i:{int(d_percentage)};--clr:#f9bf43; font-size:9;">
+                <h3 style="top:35px">{int(d_percentage)}<span>%</span></h3>
+                <h4 style="top:50px; font-size:16;"> D </h4>
+            </div>
+        </div>
+    </body>
+    """
+    return code
 
+def calculate_percentage(list_name):
+    people_list     = get_people_from_lists(list_name)
+    no_of_people    = len(people_list) 
+    connected_count = 0
+    
 
 today = date.today() 
+a_people_list = get_people_from_lists("A_list.md")
+b_people_list = get_people_from_lists("B_list.md")
+c_people_list = get_people_from_lists("C_list.md")
+d_people_list = get_people_from_lists("D_list.md")
+
+number_of_a_people = len(a_people_list)
+number_of_b_people = len(b_people_list)
+number_of_c_people = len(c_people_list)
+number_of_d_people = len(d_people_list)
+
+a_contact_count = 0
+b_contact_count = 0
+c_contact_count = 0
+d_contact_count = 0
+
+contacted_list = []
 for d_days in range(15):
     # get the date 
     delta_days = timedelta(days=d_days)
@@ -45,4 +102,14 @@ for d_days in range(15):
     s_specific_day_list = s_specific_day.split("-")
     s_specific_day = "[[" + s_specific_day_list[0]+"." + s_specific_day_list[1] + "." + s_specific_day_list[2] + "]]"
 
+    for person_index in range(len(a_people_list)):
+        print(a_people_list[person_index][2:-2])
+        if(is_connect_with_specific_date(a_people_list[person_index][2:-2],s_specific_day)):
+            if(not(a_people_list[person_index] in contacted_list)):
+                a_contact_count += 1           
+                contacted_list.append(a_people_list[person_index])
 
+    percentage = a_contact_count*100/number_of_a_people
+
+# put_html_on_daily_dairy(today=date(year=2024,month=1,day=1),html_code="<html>")
+print(make_html_code(23.3,39,13,44.9))
