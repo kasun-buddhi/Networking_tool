@@ -128,8 +128,10 @@ def calculate_list_percentage(people_list,days_count,today):
                 if(not(people_list[person_index] in contacted_list)):
                     contacted_count += 1           
                     contacted_list.append(people_list[person_index])
-
-    percentage = contacted_count*101.0/number_of_list_members 
+    if(number_of_list_members != 0 ):
+        percentage = contacted_count*100.0/number_of_list_members 
+    else:
+        percentage = 0.0
     return percentage
 
 
@@ -159,9 +161,9 @@ d_contact_count = 0
 # print(calculate_list_percentage(a_people_list,15,today))
 
 a_list_percentage = calculate_list_percentage(a_people_list,15,today)
-b_list_percentage = 23.4;
-c_list_percentage = 11.444;
-d_list_percentage = 55.5;
+b_list_percentage = calculate_list_percentage(b_people_list,15,today)
+c_list_percentage = calculate_list_percentage(c_people_list,15,today)
+d_list_percentage = calculate_list_percentage(d_people_list,15,today)
 
 html_code = make_html_code(a_list_percentage,b_list_percentage,c_list_percentage,d_list_percentage)
 put_html_on_daily_dairy(today,html_code)
