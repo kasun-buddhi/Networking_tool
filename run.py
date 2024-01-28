@@ -6,10 +6,25 @@ from datetime import date
 #       Func List
 #######################################################################################################################
 
+def get_color(percentage):
+    exelent_color = "#43f94a" 
+    good_color    = "#43f9e1"
+    ok_color      = "#f9bf43"
+    bad_color     = "#ff3d3d"
+
+    if(percentage < 25):
+        return bad_color
+    elif(percentage < 50):
+        return ok_color
+    elif(percentage < 75):
+        return good_color
+    else:
+        return exelent_color
+
 # Give True or false with date available on a specific person (ex : person="person_a", specific_day="[[2024.01.01]]")
 def is_connect_with_specific_date(person,specific_day):
     is_connected    = False
-    path            = "People"
+    path            = "Networking/people"
     file            = open(path+"/"+person+".md","r")
     content         = file.readlines()
         
@@ -24,7 +39,7 @@ def is_connect_with_specific_date(person,specific_day):
 # Get peoples from the main lists categories( ex : from A_list list_name="A_list.md")
 # Will return string people list (ex: ["[[person_a]]", "[[person_b]]"])
 def get_people_from_lists(list_name):
-    a_list_file     = open(list_name,"r")
+    a_list_file     = open("Networking/"+list_name,"r")
     a_people        = a_list_file.readlines()
     while (True):
         try:
@@ -34,6 +49,7 @@ def get_people_from_lists(list_name):
     for count in range(len(a_people)):
         if(a_people[count][-1:] == "\n"):
             a_people[count] = a_people[count][:-1]
+    a_list_file.close()
     return a_people
 
 # Append html code into daily dairy (ex : today="2024-01-01",html_code=str(code))
@@ -47,22 +63,42 @@ def put_html_on_daily_dairy(today,html_code):
 
 # html string maker 
 def make_html_code(a_percentage,b_percentage,c_percentage,d_percentage):
-    code =  f"""
-    <body>
+    #type
+    a_class_type = "progress"
+    b_class_type = "progress"
+    c_class_type = "progress"
+    d_class_type = "progress"
+
+    if(a_percentage < 50):
+        a_class_type = "progress less"
+    if(b_percentage < 50):
+        b_class_type = "progress less"
+    if(c_percentage < 50):
+        c_class_type = "progress less"
+    if(d_percentage < 50):
+        d_class_type = "progress less"
+    
+    #colors
+    a_color     = get_color(a_percentage)
+    b_color     = get_color(b_percentage)
+    c_color     = get_color(c_percentage)
+    d_color     = get_color(d_percentage)
+    
+    code =  f"""<body>
         <div class="container">
-            <div class="progress" style="--i:{int(a_percentage)};--clr:#43f94a; font-size:9; '">
+            <div class="{a_class_type}" style="--i:{int(a_percentage)};--clr:{a_color}; font-size:9; '">
                 <h3 style="top:35px">{int(a_percentage)}<span>%</span></h3>
                 <h4 style="top:50px; font-size:16;">A</h4>
             </div>
-            <div class="progress" style="--i:{int(b_percentage)};--clr:#43f9e1; font-size:9;">
+            <div class="{b_class_type}" style="--i:{int(b_percentage)};--clr:{b_color}; font-size:9;">
                 <h3 style="top:35px">{int(b_percentage)}<span>%</span></h3>
                 <h4 style="top:50px; font-size:16;">B</h4>
             </div>
-            <div class="progress less" style="--i:{int(c_percentage)};--clr:#a143f9; font-size:9;">
+            <div class="{c_class_type}" style="--i:{int(c_percentage)};--clr:{c_color}; font-size:9;">
                 <h3 style="top:35px">{int(c_percentage)}<span>%</span></h3>
                 <h4 style="top:50px; font-size:16;"> C</h4>
             </div>
-            <div class="progress" style="--i:{int(d_percentage)};--clr:#f9bf43; font-size:9;">
+            <div class="{d_class_type}" style="--i:{int(d_percentage)};--clr:{d_color}; font-size:9;">
                 <h3 style="top:35px">{int(d_percentage)}<span>%</span></h3>
                 <h4 style="top:50px; font-size:16;"> D </h4>
             </div>
@@ -122,3 +158,10 @@ d_contact_count = 0
 
 # print(calculate_list_percentage(a_people_list,15,today))
 
+a_list_percentage = calculate_list_percentage(a_people_list,15,today)
+b_list_percentage = 23.4;
+c_list_percentage = 11.444;
+d_list_percentage = 55.5;
+
+html_code = make_html_code(a_list_percentage,b_list_percentage,c_list_percentage,d_list_percentage)
+put_html_on_daily_dairy(today,html_code)
